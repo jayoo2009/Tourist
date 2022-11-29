@@ -17,13 +17,11 @@ public class HomeController : Controller
     {
         return View();
     }
-
-    public IActionResult Privacy()
-    {
+    public IActionResult Map()
+    {   
         return View();
     }
-
-    public IActionResult Map()
+    public IActionResult Keyword()
     {
         return View();
     }
