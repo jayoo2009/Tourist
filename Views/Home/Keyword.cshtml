@@ -59,12 +59,11 @@
 // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
         var zoomControl = new kakao.maps.ZoomControl();
         map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-
-
-
+// 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
 
 // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
-        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+        @* kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
         searchDetailAddrFromCoords(mouseEvent.latLng, function(result2, status) {
             if (status === kakao.maps.services.Status.OK) {
                 var detailAddr = !!result2[0].road_address ? '<div>도로명주소 : ' + result2[0].road_address.address_name + '</div>' : '';
@@ -84,28 +83,10 @@
                 infowindow.open(map, marker);
             }   
         });
-    });
-
-    function searchAddrFromCoords(coords, callback) {
-    // 좌표로 행정동 주소 정보를 요청합니다
-        geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
-    }
-
-    function searchDetailAddrFromCoords(coords, callback) {
-    // 좌표로 법정동 상세 주소 정보를 요청합니다
-        geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-    }
-
-
-
+    }); *@
 
 // 장소 검색 객체를 생성합니다
     var ps = new kakao.maps.services.Places(); 
-
-
-
-// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-    var infowindow = new kakao.maps.InfoWindow({zIndex:1});
 // 키워드로 장소를 검색합니다
     searchPlaces();
 
@@ -131,8 +112,6 @@
         ps.keywordSearch( keyword, placesSearchCB); 
 }
 
-
-
 // 키워드 검색 완료 시 호출되는 콜백함수 입니다
     function placesSearchCB (data, status, pagination) {
         if (status === kakao.maps.services.Status.OK) {
@@ -151,6 +130,9 @@
         } 
     }
 
+    var detailAddr = !!result2[0].road_address ? '<div>도로명주소 : ' + result2[0].road_address.address_name + '</div>' : '';
+                detailAddr += '<div>지번 주소 : ' + result2[0].address.address_name + '</div>';
+
 // 지도에 마커를 표시하는 함수입니다
     function displayMarker(place) {
     
@@ -163,36 +145,16 @@
     // 마커에 클릭이벤트를 등록합니다
         kakao.maps.event.addListener(marker, 'click', function() {
         // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-            infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+            infowindow.setContent('<div class="overlay_info">' +
+                '    <a href="https://map.kakao.com/link/search/'+place.place_name+'" target="_blank"><strong>'+ place.place_name +'</strong></a>'+
+                '</div>');
             infowindow.open(map, marker);
         });
     }
-
-    var content = '<div class="overlay_info">';
-    content += '    <a href="https://place.map.kakao.com/17600274" target="_blank"><strong>월정리 해수욕장</strong></a>';
-    content += '    <div class="desc">';
-    content += '        <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/place_thumb.png" alt="">';
-    content += '        <span class="address">제주특별자치도 제주시 구좌읍 월정리 33-3</span>';
-    content += '    </div>';
-    content += '</div>';
-
-// 커스텀 오버레이가 표시될 위치입니다 
-    var position = new kakao.maps.LatLng(33.55635, 126.795841);
-
-    var content = '<div class="overlay_info">';
-    content += '    <a href="https://place.map.kakao.com/9693807#none" target="_blank"><strong>가야랜드</strong></a>';
-    content += '    <div class="desc">';
-    content += '        <img src="https://ldb-phinf.pstatic.net/20211015_38/16342840926098y7cs_JPEG/fF1I_Tpo71ImBmjHxUgt7kHI.jpg" alt="사진" width = "30%" height = "70%" >';
-    content += '        <span class="address">경남 김해시 인제로 368 가야랜드</span>';
-    content += '    </div>';
-    content += '</div>';
-
-// 커스텀 오버레이가 표시될 위치입니다 
-    var position = new kakao.maps.LatLng(35.26050550896286, 128.90198394796286);
-
-
-
-
+function searchDetailAddrFromCoords(coords, callback) {
+    // 좌표로 법정동 상세 주소 정보를 요청합니다
+    geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+}
 
 // 커스텀 오버레이를 생성합니다
     var mapCustomOverlay = new kakao.maps.CustomOverlay({
