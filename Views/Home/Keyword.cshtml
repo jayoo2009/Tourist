@@ -97,12 +97,12 @@
         const str = document.getElementById('keyword').value;
 
         if (!keyword.replace(/^\s+|\s+$/g, '')) {
-            alert('장소를 입력해주세요!');
+            alert('관광지를 입력해주세요!');
             return false;
         }
 
         if(!str.includes('관광지')){
-            alter('다른거 검색 하지마세요.');
+            alter('관광지를 입력해주세요!');
             return false;
         }
         
